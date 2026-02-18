@@ -46,9 +46,12 @@
 			<!-- 许愿/礼物功能 -->
 			<div class="wishes">
 				<h3 class="wish-title">🎁 告诉我你想要什么生日礼物？</h3>
-				<form name="gift-form" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" id="giftForm">
+				<form name="gift-form" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+					<!-- 必需：防机器人字段 -->
 					<input type="hidden" name="bot-field" />
-					<input type="hidden" name="form-name" value="gift-form">
+					
+					<!-- 必需：表单名称字段 -->
+					<input type="hidden" name="form-name" value="gift-form" />
 					
 					<div class="input-group">
 						<input 

@@ -748,3 +748,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ======================
+// 表单提交处理 - 简化版
+// ======================
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ 页面加载完成');
+    
+    // 不要阻止表单默认提交！让 Netlify 处理
+    // 只添加成功/失败的提示
+});
+
+// 表单提交后的消息显示
+function showFormMessage(message, type) {
+    const formMessage = document.getElementById('formMessage');
+    if (formMessage) {
+        formMessage.textContent = message;
+        formMessage.className = `form-message ${type}`;
+        formMessage.style.display = 'block';
+        
+        setTimeout(() => {
+            if (formMessage) formMessage.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// 本地存储（作为备份）
+function saveGiftLocally(giftName) {
+    const gifts = JSON.parse(localStorage.getItem('birthdayGifts') || '[]');
+    const newGift = {
+        id: Date.now(),
+        name: giftName,
+        timestamp: new Date().toISOString()
+    };
+    gifts.unshift(newGift);
+    localStorage.setItem('birthdayGifts', JSON.stringify(gifts));
+}
