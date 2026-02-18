@@ -11,15 +11,22 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden; /* 只禁止横向滚动，允许纵向滚动 */
     position: relative;
+    margin: 0;
+    padding: 20px 0;
 }
 
 .container {
     position: relative;
     width: 100%;
     max-width: 800px;
-    padding: 40px;
+    padding: 40px 20px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* 气球动画 */
@@ -30,6 +37,7 @@ body {
     background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
     border-radius: 50% 50% 0 0;
     animation: float 6s ease-in-out infinite;
+    z-index: 1;
 }
 
 .balloon::before {
@@ -64,6 +72,9 @@ body {
     position: relative;
     z-index: 10;
     animation: fadeIn 1s ease-out;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 @keyframes fadeIn {
@@ -148,44 +159,167 @@ body {
     font-weight: bold;
 }
 
-/* 倒计时 */
-.countdown {
-    font-size: 1.2em;
-    color: #666;
-    margin: 20px 0;
-    padding: 10px;
-    background: #f0f0f0;
-    border-radius: 10px;
-    font-weight: bold;
+/* 倒计时容器 */
+.countdown-container {
+    margin: 25px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-/* 许愿功能 */
+.countdown-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6b6b, #ffa500, #ffd700, #7cfc00);
+    animation: rainbow 8s linear infinite;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.countdown-title {
+    font-size: 1.4em;
+    color: #e65100;
+    margin-bottom: 15px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.countdown {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 1.8em;
+    color: #d32f2f;
+    font-weight: bold;
+    flex-wrap: wrap;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.countdown-item span {
+    font-size: 2.2em;
+    color: #d32f2f;
+    line-height: 1;
+}
+
+/* 特殊消息样式 */
+.special-message {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+    display: none;
+    animation: pulse 1.5s infinite;
+}
+
+.special-message.birthday {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    color: #d32f2f;
+    display: block;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+}
+
+.special-message.newyear {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    color: #1565c0;
+    display: block;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+/* 许愿/礼物功能 */
 .wishes {
     margin: 30px 0;
 }
 
-.wish-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1.1em;
+.wishes h3 {
+    color: #ff6b6b;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+input[type="text"] {
+    padding: 15px;
+    border: 2px solid #ddd;
     border-radius: 25px;
-    cursor: pointer;
-    margin: 10px;
+    font-size: 1em;
+    outline: none;
     transition: all 0.3s;
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    width: 100%;
 }
 
-.wish-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+input[type="text"]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
 }
 
-.wish-list {
+.form-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+}
+
+.form-message.success {
+    background: #d4edda;
+    color: #155724;
+    display: block;
+    animation: slideDown 0.5s;
+}
+
+.form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    display: block;
+    animation: slideDown 0.5s;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.history-title {
     margin-top: 20px;
-    max-height: 200px;
-    overflow-y: auto;
+    color: #666;
+    font-size: 0.9em;
 }
 
 .wish-item {
@@ -199,6 +333,10 @@ body {
 @keyframes slideIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+.wish-history {
+    margin-top: 20px;
 }
 
 /* 礼物盒 */
@@ -278,90 +416,6 @@ body {
     box-shadow: 0 8px 20px rgba(17, 153, 142, 0.6);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .title {
-        font-size: 2em;
-    }
-    
-    .cake {
-        width: 150px;
-        height: 120px;
-    }
-    
-    .content {
-        padding: 20px;
-    }
-}
-/* ... 之前的样式保持不变 ... */
-
-/* 许愿表单样式 */
-.wishes h3 {
-    color: #ff6b6b;
-    margin-bottom: 15px;
-    font-size: 1.3em;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-input[type="text"] {
-    padding: 15px;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    font-size: 1em;
-    outline: none;
-    transition: all 0.3s;
-    width: 100%;
-}
-
-input[type="text"]:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-}
-
-.form-message {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    display: none;
-}
-
-.form-message.success {
-    background: #d4edda;
-    color: #155724;
-    display: block;
-    animation: slideDown 0.5s;
-}
-
-.form-message.error {
-    background: #f8d7da;
-    color: #721c24;
-    display: block;
-    animation: slideDown 0.5s;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.history-title {
-    margin-top: 20px;
-    color: #666;
-    font-size: 0.9em;
-}
-
 /* 管理员入口 */
 .admin-section {
     margin-top: 30px;
@@ -398,6 +452,7 @@ input[type="text"]:focus {
     z-index: 1000;
     justify-content: center;
     align-items: center;
+    overflow-y: auto;
 }
 
 .modal-content {
@@ -409,6 +464,7 @@ input[type="text"]:focus {
     max-height: 80vh;
     overflow-y: auto;
     animation: modalOpen 0.3s;
+    margin: 20px auto;
 }
 
 @keyframes modalOpen {
@@ -517,115 +573,35 @@ input[type="text"]:focus {
     padding: 30px;
 }
 
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .input-group {
-        flex-direction: column;
-    }
-    
-    input[type="text"] {
-        padding: 12px;
-    }
-    
-    .wish-btn {
-        padding: 12px;
-        font-size: 1em;
-    }
-}
-
-/* 倒计时容器 */
-.countdown-container {
-    margin: 25px 0;
-    padding: 20px;
-    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.countdown-container::before {
-    content: '';
+/* 雪花样式 */
+.snow {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #ff6b6b, #ffa500, #ffd700, #7cfc00);
-    animation: rainbow 8s linear infinite;
+    background: white;
+    border-radius: 50%;
+    z-index: 1;
 }
 
-@keyframes rainbow {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
+/* 彩纸样式 */
+.confetti {
+    position: absolute;
+    z-index: 1000;
 }
 
-.countdown-title {
-    font-size: 1.4em;
-    color: #e65100;
-    margin-bottom: 15px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-.countdown {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    font-size: 1.8em;
-    color: #d32f2f;
-    font-weight: bold;
-}
-
-.countdown-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 80px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.countdown-item span {
-    font-size: 2.2em;
-    color: #d32f2f;
-    line-height: 1;
-}
-
-/* 特殊消息样式 */
-.special-message {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 10px;
-    font-size: 1.3em;
-    font-weight: bold;
-    display: none;
-    animation: pulse 1.5s infinite;
-}
-
-.special-message.birthday {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-    color: #d32f2f;
-    display: block;
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
-}
-
-.special-message.newyear {
-    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-    color: #1565c0;
-    display: block;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.03); }
-}
-
-/* 响应式调整 */
+/* 响应式设计 */
 @media (max-width: 768px) {
+    .title {
+        font-size: 2em;
+    }
+    
+    .cake {
+        width: 150px;
+        height: 120px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
     .countdown {
         flex-wrap: wrap;
         font-size: 1.4em;
@@ -642,5 +618,54 @@ input[type="text"]:focus {
     
     .countdown-title {
         font-size: 1.2em;
+    }
+    
+    input[type="text"] {
+        padding: 12px;
+    }
+    
+    .wish-btn {
+        padding: 12px;
+        font-size: 1em;
+    }
+    
+    .modal-content {
+        padding: 20px;
+    }
+}
+
+/* 移动端优化 */
+@media (max-width: 480px) {
+    body {
+        padding: 10px 0;
+    }
+    
+    .container {
+        padding: 20px 10px;
+    }
+    
+    .content {
+        padding: 20px 15px;
+    }
+    
+    .title {
+        font-size: 1.8em;
+    }
+    
+    .message {
+        font-size: 1.2em;
+    }
+    
+    .countdown-item {
+        min-width: 50px;
+        padding: 6px;
+    }
+    
+    .countdown-item span {
+        font-size: 1.6em;
+    }
+    
+    h3 {
+        font-size: 1.1em;
     }
 }
