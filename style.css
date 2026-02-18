@@ -1,0 +1,534 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    padding: 40px;
+}
+
+/* 气球动画 */
+.balloon {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    border-radius: 50% 50% 0 0;
+    animation: float 6s ease-in-out infinite;
+}
+
+.balloon::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.balloon-1 { top: 10%; left: 10%; animation-delay: 0s; background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); }
+.balloon-2 { top: 20%; right: 15%; animation-delay: 1s; background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+.balloon-3 { top: 40%; left: 20%; animation-delay: 2s; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+.balloon-4 { top: 60%; right: 25%; animation-delay: 3s; background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+.balloon-5 { top: 30%; left: 30%; animation-delay: 4s; background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* 主要内容 */
+.content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 10;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.title {
+    font-size: 3em;
+    color: #ff6b6b;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* 蛋糕 */
+.cake-container {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.cake {
+    width: 200px;
+    height: 150px;
+    background: linear-gradient(to bottom, #f8c3cd 0%, #f08080 100%);
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.cake::before {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: #8b4513;
+    border-radius: 0 0 10px 10px;
+}
+
+.candle {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 40px;
+    background: #ff69b4;
+    border-radius: 5px;
+    animation: flicker 0.5s infinite alternate;
+}
+
+.flame {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 25px;
+    background: linear-gradient(to top, #ff4500, #ffa500, #ffff00);
+    border-radius: 50% 50% 0 0;
+    box-shadow: 0 0 20px #ff4500;
+    animation: flicker 0.3s infinite alternate;
+}
+
+@keyframes flicker {
+    from { opacity: 0.8; transform: translateX(-50%) scale(1); }
+    to { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+.message {
+    font-size: 1.5em;
+    color: #333;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+/* 倒计时 */
+.countdown {
+    font-size: 1.2em;
+    color: #666;
+    margin: 20px 0;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* 许愿功能 */
+.wishes {
+    margin: 30px 0;
+}
+
+.wish-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1em;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.wish-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+}
+
+.wish-list {
+    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.wish-item {
+    background: #f0f0f0;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 10px;
+    animation: slideIn 0.5s;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 礼物盒 */
+.gift-box {
+    cursor: pointer;
+    margin: 30px 0;
+    transition: transform 0.3s;
+}
+
+.gift-box:hover {
+    transform: scale(1.05);
+}
+
+.gift {
+    width: 100px;
+    height: 80px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    margin: 0 auto;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s;
+}
+
+.gift.open {
+    transform: scale(0.8);
+    opacity: 0.5;
+}
+
+.gift::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%);
+}
+
+.ribbon {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: #ff6b6b;
+    border-radius: 50%;
+}
+
+.gift-text {
+    color: #666;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* 音乐控制 */
+.music-control {
+    margin-top: 20px;
+}
+
+.music-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1em;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+}
+
+.music-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(17, 153, 142, 0.6);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2em;
+    }
+    
+    .cake {
+        width: 150px;
+        height: 120px;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+}
+/* ... 之前的样式保持不变 ... */
+
+/* 许愿表单样式 */
+.wishes h3 {
+    color: #ff6b6b;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+input[type="text"] {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 1em;
+    outline: none;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+input[type="text"]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+}
+
+.form-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+}
+
+.form-message.success {
+    background: #d4edda;
+    color: #155724;
+    display: block;
+    animation: slideDown 0.5s;
+}
+
+.form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    display: block;
+    animation: slideDown 0.5s;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.history-title {
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* 管理员入口 */
+.admin-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #ddd;
+}
+
+.admin-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 0.9em;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+}
+
+.admin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.6);
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: modalOpen 0.3s;
+}
+
+@keyframes modalOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-title {
+    font-size: 1.5em;
+    color: #333;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.close-btn:hover {
+    background: #ee5a24;
+    transform: rotate(90deg);
+}
+
+.admin-login {
+    margin-bottom: 20px;
+}
+
+.admin-login input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1em;
+}
+
+.admin-login button {
+    width: 100%;
+    padding: 12px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.admin-login button:hover {
+    background: #764ba2;
+}
+
+.gift-records {
+    display: none;
+}
+
+.record-item {
+    background: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.record-item .gift-name {
+    font-weight: bold;
+    color: #ff6b6b;
+    font-size: 1.1em;
+}
+
+.record-item .timestamp {
+    color: #999;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.no-records {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+    }
+    
+    input[type="text"] {
+        padding: 12px;
+    }
+    
+    .wish-btn {
+        padding: 12px;
+        font-size: 1em;
+    }
+}

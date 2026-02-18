@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐！🎂</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 背景气球 -->
+        <div class="balloon balloon-1"></div>
+        <div class="balloon balloon-2"></div>
+        <div class="balloon balloon-3"></div>
+        <div class="balloon balloon-4"></div>
+        <div class="balloon balloon-5"></div>
+
+        <!-- 主要内容 -->
+        <div class="content">
+            <h1 class="title">🎉 Happy Birthday! 🎉</h1>
+            <div class="cake-container">
+                <div class="cake">
+                    <div class="candle">
+                        <div class="flame"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="message">祝你生日快乐，天天开心！</p>
+            <div class="countdown" id="countdown"></div>
+            
+            <!-- 许愿/礼物功能 -->
+            <div class="wishes">
+                <h3>🎁 告诉我你想要什么生日礼物？</h3>
+                <form name="gift-form" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+					<input type="hidden" name="form-name" value="gift-form">
+					<div class="input-group">
+						<input 
+							type="text" 
+							name="giftName" 
+							id="giftInput" 
+							placeholder="输入你想要的生日礼物..." 
+							required
+						>
+						<button type="submit" class="wish-btn">
+							<i class="fas fa-gift"></i> 送出愿望
+						</button>
+					</div>
+					<div class="form-message" id="formMessage"></div>
+				</form>
+                <div class="wish-history">
+                    <p class="history-title">最近的愿望：</p>
+                    <div class="wish-list" id="wishList"></div>
+                </div>
+            </div>
+            
+            <div class="gift-box" onclick="openGift()">
+                <div class="gift">
+                    <div class="ribbon"></div>
+                </div>
+                <p class="gift-text">🎁 点击打开礼物</p>
+            </div>
+            <div class="music-control">
+                <button class="music-btn" onclick="toggleMusic()">
+                    <i class="fas fa-music"></i> 播放音乐
+                </button>
+            </div>
+            
+            <!-- 管理员查看按钮 -->
+            <div class="admin-section">
+                <button class="admin-btn" onclick="showAdminPanel()">
+                    <i class="fas fa-lock"></i> 管理员入口
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="birthdaySong" loop>
+        <source src="birthday.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
