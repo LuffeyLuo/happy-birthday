@@ -270,44 +270,83 @@ function saveGiftLocally(giftName) {
     localStorage.setItem('birthdayGifts', JSON.stringify(gifts));
 }
 
-// 添加到历史记录显示
+// 添加到历史记录显示（简化，不再显示在页面上）
 function addWishToHistory(giftName) {
-    if (wishList) {
-        const wishItem = document.createElement('div');
-        wishItem.className = 'wish-item';
-        wishItem.innerHTML = `🎁 ${giftName}`;
-        wishList.insertBefore(wishItem, wishList.firstChild);
-        
-        // 限制显示最近5个
-        if (wishList.children.length > 5) {
-            wishList.removeChild(wishList.lastChild);
-        }
-    }
+    // 不再在页面上显示，只保存到 localStorage
+    // 这个函数保留是为了兼容性
 }
 
-// 页面加载时显示历史记录
+// 页面加载时不再加载历史记录
 function loadWishHistory() {
-    const gifts = JSON.parse(localStorage.getItem('birthdayGifts') || '[]');
-    gifts.slice(0, 5).forEach(gift => {
-        addWishToHistory(gift.name);
-    });
+    // 空函数，不加载历史记录到页面
 }
 
 // ======================
 // 礼物盒功能
 // ======================
+// ======================
+// 礼物盒功能 - 弹出图片
+// ======================
+
 function openGift() {
     const gift = document.querySelector('.gift');
     const giftText = document.querySelector('.gift-text');
+    const giftModal = document.getElementById('giftModal');
     
     if (gift && !gift.classList.contains('open')) {
+        // 标记礼物已打开
         gift.classList.add('open');
-        if (giftText) giftText.textContent = '🎊 礼物已打开！祝你生日快乐！🎊';
+        if (giftText) giftText.textContent = '🎊 礼物已打开！';
         
+        // 显示弹窗
         setTimeout(() => {
-            alert('🎉 恭喜！你收到了一份特别的生日祝福！愿你天天开心，万事如意！🎂');
-        }, 500);
+            if (giftModal) {
+                giftModal.classList.add('show');
+                // 阻止页面滚动
+                document.body.style.overflow = 'hidden';
+            }
+        }, 300);
+        
+        // 播放打开音效（可选）
+        playGiftOpenSound();
     }
+}
+
+// 关闭礼物弹窗
+function closeGiftModal() {
+    const giftModal = document.getElementById('giftModal');
+    
+    if (giftModal) {
+        giftModal.classList.remove('show');
+        // 恢复页面滚动
+        setTimeout(() => {
+            document.body.style.overflow = '';
+        }, 300);
+    }
+}
+
+// 点击遮罩层关闭弹窗
+document.addEventListener('click', function(e) {
+    const giftModal = document.getElementById('giftModal');
+    if (giftModal && giftModal.classList.contains('show')) {
+        if (e.target === giftModal) {
+            closeGiftModal();
+        }
+    }
+});
+
+// 按ESC键关闭弹窗
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeGiftModal();
+    }
+});
+
+// 播放打开礼物音效（可选）
+function playGiftOpenSound() {
+    // 可以添加音效，例如：
+    // const audio = new Audio('gift-open.mp3');
+    // audio.play().catch(e => console.log('音效播放失败:', e));
 }
 
 // ======================
@@ -427,27 +466,117 @@ function loadGiftRecords() {
 }
 
 // ======================
-// 雪花效果
+// 增强版雪花效果
 // ======================
 function createSnow() {
     const container = document.querySelector('.container');
     if (!container) return;
     
-    for (let i = 0; i < 50; i++) {
+    // 创建雪花容器（如果不存在）
+    let snowContainer = document.getElementById('snow-container');
+    if (!snowContainer) {
+        snowContainer = document.createElement('div');
+        snowContainer.id = 'snow-container';
+        snowContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        `;
+        document.body.appendChild(snowContainer);
+    }
+    
+    // 创建60-100片雪花
+    const snowCount = Math.floor(Math.random() * 40) + 60;
+    
+    for (let i = 0; i < snowCount; i++) {
         const snow = document.createElement('div');
         snow.className = 'snow';
-        snow.style.left = Math.random() * 100 + 'vw';
-        snow.style.animationDuration = Math.random() * 3 + 2 + 's';
-        snow.style.opacity = Math.random();
-        snow.style.width = Math.random() * 10 + 5 + 'px';
-        snow.style.height = snow.style.width;
-        snow.style.position = 'absolute';
-        snow.style.top = '-20px';
-        snow.style.backgroundColor = 'white';
-        snow.style.borderRadius = '50%';
-        snow.style.zIndex = '1';
-        container.appendChild(snow);
+        
+        // 随机大小
+        const size = Math.random() * 8 + 2;
+        snow.style.width = size + 'px';
+        snow.style.height = size + 'px';
+        
+        // 随机起始位置
+        const startX = Math.random() * 100;
+        snow.style.left = startX + 'vw';
+        snow.style.top = '-' + (Math.random() * 20) + 'px';
+        
+        // 随机透明度
+        snow.style.opacity = Math.random() * 0.7 + 0.3;
+        
+        // 随机动画时长
+        const duration = Math.random() * 10 + 8;
+        snow.style.animationDuration = duration + 's';
+        
+        // 随机动画延迟
+        const delay = Math.random() * 5;
+        snow.style.animationDelay = delay + 's';
+        
+        // 随机类型
+        const type = Math.floor(Math.random() * 3);
+        snow.dataset.type = type;
+        
+        // 添加雪花形状
+        if (type === 0) {
+            snow.style.borderRadius = '50%';
+        } else if (type === 1) {
+            snow.style.borderRadius = '30% 70% 40% 60%';
+        } else {
+            snow.style.borderRadius = '20% 80% 30% 70%';
+        }
+        
+        snowContainer.appendChild(snow);
     }
+}
+
+// 创建单片雪花
+function createSingleSnow(container, index) {
+    const snow = document.createElement('div');
+    snow.className = 'snow';
+    
+    // 随机大小 (2-10px)
+    const size = Math.random() * 8 + 2;
+    snow.style.width = size + 'px';
+    snow.style.height = size + 'px';
+    
+    // 随机起始位置（从顶部不同位置开始）
+    const startX = Math.random() * 100;
+    snow.style.left = startX + 'vw';
+    snow.style.top = '-10px';
+    
+    // 随机透明度
+    snow.style.opacity = Math.random() * 0.8 + 0.2;
+    
+    // 随机动画时长 (8-15秒)
+    const duration = Math.random() * 7 + 8;
+    snow.style.animationDuration = duration + 's';
+    
+    // 随机动画延迟
+    const delay = Math.random() * 5;
+    snow.style.animationDelay = delay + 's';
+    
+    // 随机z-index
+    snow.style.zIndex = Math.floor(Math.random() * 5) + 1;
+    
+    // 添加雪花类型（不同形状）
+    const snowType = Math.floor(Math.random() * 3);
+    snow.dataset.type = snowType;
+    
+    container.appendChild(snow);
+    
+    // 雪花飘落完成后重新开始
+    setTimeout(() => {
+        snow.addEventListener('animationiteration', () => {
+            // 重新随机位置
+            snow.style.left = Math.random() * 100 + 'vw';
+            snow.style.opacity = Math.random() * 0.8 + 0.2;
+        });
+    }, delay * 1000);
 }
 
 // ======================
@@ -464,4 +593,158 @@ window.addEventListener('load', () => {
     console.log('计算得出的2026年大年初三:', getLunarThirdDay(2026).toLocaleDateString('zh-CN'));
     console.log('是否匹配:', isSameDay(new Date(), getLunarThirdDay(2026)));
     console.log('==============================');
+	
+	// ========== 自动播放音乐 ==========
+    autoPlayMusic();
+});
+
+// ======================
+// 自动播放音乐函数
+// ======================
+function autoPlayMusic() {
+    const birthdaySong = document.getElementById('birthdaySong');
+    const musicBtn = document.querySelector('.music-btn');
+    
+    if (!birthdaySong) return;
+    
+    // 尝试自动播放
+    const playPromise = birthdaySong.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log('🎵 音乐自动播放成功！');
+            if (musicBtn) {
+                musicBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停音乐';
+            }
+            isPlaying = true;
+            
+            // 显示播放提示
+            showMusicNotification('生日快乐歌已自动播放 🎵', 'success');
+        }).catch(error => {
+            console.log('⚠️ 音乐自动播放被阻止:', error);
+            
+            // 显示提示消息
+            showMusicNotification('🔊 点击页面任意位置播放生日音乐', 'info');
+            
+            // 监听用户第一次点击，触发播放
+            document.body.addEventListener('click', function initAudio() {
+                birthdaySong.play().then(() => {
+                    if (musicBtn) {
+                        musicBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停音乐';
+                    }
+                    isPlaying = true;
+                    showMusicNotification('🎵 音乐开始播放！', 'success');
+                }).catch(e => {
+                    console.log('播放失败:', e);
+                });
+                
+                // 移除事件监听器，只触发一次
+                document.body.removeEventListener('click', initAudio);
+            }, { once: true });
+        });
+    }
+}
+
+// ======================
+// 显示音乐提示消息
+// ======================
+function showMusicNotification(message, type) {
+    // 检查是否已存在通知
+    let notification = document.getElementById('music-notification');
+    
+    if (!notification) {
+        // 创建通知元素
+        notification = document.createElement('div');
+        notification.id = 'music-notification';
+        notification.className = `music-notification ${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideInDown 0.5s, fadeOut 0.5s 2.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        `;
+        document.body.appendChild(notification);
+    }
+    
+    // 设置样式
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)';
+    } else if (type === 'info') {
+        notification.style.background = 'linear-gradient(135deg, #2196f3 0%, #03a9f4 100%)';
+    }
+    
+    // 设置内容
+    notification.innerHTML = `
+        ${type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-info-circle"></i>'}
+        ${message}
+    `;
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        if (notification) {
+            notification.style.animation = 'fadeOut 0.5s forwards';
+            setTimeout(() => {
+                if (notification && notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 500);
+        }
+    }, 3000);
+}
+
+// 添加通知动画
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// ======================
+// 音量控制函数
+// ======================
+function setVolume(volume) {
+    const birthdaySong = document.getElementById('birthdaySong');
+    if (birthdaySong) {
+        birthdaySong.volume = volume;
+    }
+}
+
+// 监听音量变化
+document.addEventListener('DOMContentLoaded', () => {
+    const volumeSlider = document.getElementById('volumeSlider');
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', function() {
+            setVolume(this.value);
+        });
+    }
 });

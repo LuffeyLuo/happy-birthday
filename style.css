@@ -11,7 +11,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x: hidden; /* 只禁止横向滚动，允许纵向滚动 */
+    overflow-x: hidden; /* 只禁止横向滚动 */
+    overflow-y: auto; /* 允许纵向滚动 */
     position: relative;
     margin: 0;
     padding: 20px 0;
@@ -573,12 +574,166 @@ input[type="text"]:focus {
     padding: 30px;
 }
 
-/* 雪花样式 */
+/* ========== 雪花样式 ========== */
+
 .snow {
     position: absolute;
     background: white;
     border-radius: 50%;
-    z-index: 1;
+    pointer-events: none; /* 雪花不阻挡点击 */
+    animation: snow-fall linear infinite;
+    animation-fill-mode: forwards;
+}
+
+/* 雪花下落动画 */
+@keyframes snow-fall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        opacity: var(--opacity, 1);
+    }
+    25% {
+        transform: translateY(25vh) translateX(-10px) rotate(-10deg) scale(0.95);
+    }
+    50% {
+        transform: translateY(50vh) translateX(5px) rotate(5deg) scale(1);
+    }
+    75% {
+        transform: translateY(75vh) translateX(-5px) rotate(-5deg) scale(0.98);
+    }
+    100% {
+        transform: translateY(100vh) translateX(10px) rotate(10deg) scale(1);
+        opacity: 0;
+    }
+}
+
+/* 不同类型的雪花效果 */
+.snow[data-type="0"] {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+.snow[data-type="1"] {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 15px rgba(255, 215, 0, 0.5);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.snow[data-type="2"] {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 165, 0, 0.6);
+    background: rgba(255, 255, 255, 1);
+    animation-name: snow-fall-twinkle;
+}
+
+/* 闪烁的雪花动画 */
+@keyframes snow-fall-twinkle {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        opacity: 0;
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    10% {
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(50vh) translateX(8px) rotate(15deg) scale(1.1);
+        opacity: 1;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 25px rgba(255, 215, 0, 0.8);
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) translateX(-8px) rotate(-15deg) scale(0.9);
+        opacity: 0;
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* 雪花飘落路径 */
+.snow:nth-child(odd) {
+    animation-name: snow-fall-left;
+}
+
+.snow:nth-child(even) {
+    animation-name: snow-fall-right;
+}
+
+@keyframes snow-fall-left {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: var(--opacity, 1);
+    }
+    100% {
+        transform: translateY(100vh) translateX(-50px) rotate(-30deg);
+        opacity: 0;
+    }
+}
+
+@keyframes snow-fall-right {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: var(--opacity, 1);
+    }
+    100% {
+        transform: translateY(100vh) translateX(50px) rotate(30deg);
+        opacity: 0;
+    }
+}
+
+/* 增强版雪花容器 */
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 增强版雪花 */
+#snow-container .snow {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    pointer-events: none;
+    animation: snow-fall linear infinite;
+}
+
+@keyframes snow-fall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        opacity: var(--opacity, 0.8);
+    }
+    25% {
+        transform: translateY(25vh) translateX(-15px) rotate(-15deg) scale(0.9);
+    }
+    50% {
+        transform: translateY(50vh) translateX(10px) rotate(10deg) scale(1.05);
+    }
+    75% {
+        transform: translateY(75vh) translateX(-8px) rotate(-8deg) scale(0.95);
+    }
+    100% {
+        transform: translateY(100vh) translateX(12px) rotate(12deg) scale(1);
+        opacity: 0;
+    }
+}
+
+/* 移动端优化 - 减少雪花朵数 */
+@media (max-width: 768px) {
+    .snow {
+        animation-duration: 6s !important;
+    }
+    
+    .snow::before {
+        display: none;
+    }
+}
+
+/* 低性能设备优化 */
+@media (prefers-reduced-motion: reduce) {
+    .snow {
+        animation: none !important;
+        display: none;
+    }
 }
 
 /* 彩纸样式 */
@@ -624,48 +779,716 @@ input[type="text"]:focus {
         padding: 12px;
     }
     
-    .wish-btn {
-        padding: 12px;
-        font-size: 1em;
-    }
+    /* 许愿按钮 - 精美版 */
+	.wish-btn {
+		background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff9a9e 100%);
+		color: white;
+		border: none;
+		padding: 18px 45px;
+		font-size: 1.2em;
+		font-weight: bold;
+		border-radius: 50px;
+		cursor: pointer;
+		margin: 10px;
+		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+		position: relative;
+		overflow: hidden;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	.wish-btn::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+		transition: left 0.7s;
+	}
+
+	.wish-btn:hover {
+		transform: translateY(-5px) scale(1.05);
+		box-shadow: 0 12px 35px rgba(255, 107, 107, 0.7);
+		background: linear-gradient(135deg, #ff4d4d 0%, #e55a00 50%, #ff8080 100%);
+	}
+
+	.wish-btn:hover::before {
+		left: 100%;
+	}
+
+	.wish-btn:active {
+		transform: translateY(-2px) scale(0.98);
+	}
+
+	.wish-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+		box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+	}
+
+	/* 按钮图标动画 */
+	.wish-btn i {
+		font-size: 1.3em;
+		transition: transform 0.3s;
+	}
+
+	.wish-btn:hover i {
+		transform: scale(1.2) rotate(10deg);
+	}
+
+	/* 加载状态动画 */
+	.wish-btn .fa-spinner {
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
     
     .modal-content {
         padding: 20px;
     }
 }
 
-/* 移动端优化 */
-@media (max-width: 480px) {
-    body {
-        padding: 10px 0;
+/* ========== 许愿按钮 - 超级精美版 ========== */
+
+.wish-btn {
+    /* 渐变背景 */
+    background: linear-gradient(135deg, 
+        #ff6b6b 0%, 
+        #ff8e8e 25%, 
+        #ffa500 50%, 
+        #ffd700 75%, 
+        #ff6b6b 100%);
+    
+    /* 文字颜色和样式 */
+    color: white;
+    font-size: 1.3em;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    
+    /* 尺寸和圆角 */
+    padding: 20px 50px;
+    border-radius: 60px;
+    min-width: 280px;
+    
+    /* 边框效果 */
+    border: 3px solid transparent;
+    border-image: linear-gradient(45deg, #ffd700, #ff6b6b, #ffa500, #ffd700) 1;
+    position: relative;
+    overflow: hidden;
+    
+    /* 阴影和深度 */
+    box-shadow: 
+        0 10px 30px rgba(255, 107, 107, 0.5),
+        0 0 20px rgba(255, 165, 0, 0.4),
+        inset 0 2px 10px rgba(255, 255, 255, 0.3);
+    
+    /* 布局 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    
+    /* 动画 */
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+/* 按钮内部光晕效果 */
+.wish-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 70%
+    );
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+/* 按钮内部渐变光流动画 */
+.wish-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%
+    );
+    transition: left 0.8s ease-out;
+}
+
+/* 悬停效果 */
+.wish-btn:hover {
+    transform: translateY(-8px) scale(1.08);
+    
+    /* 增强阴影 */
+    box-shadow: 
+        0 15px 40px rgba(255, 107, 107, 0.7),
+        0 0 30px rgba(255, 165, 0, 0.6),
+        inset 0 4px 15px rgba(255, 255, 255, 0.5);
+}
+
+/* 按钮按下效果 */
+.wish-btn:active {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 5px 20px rgba(255, 107, 107, 0.5),
+        0 0 15px rgba(255, 165, 0, 0.4);
+}
+
+/* 禁用状态 */
+.wish-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    animation: pulse-slow 2s infinite;
+}
+
+/* 按钮图标样式 */
+.wish-btn i {
+    font-size: 1.6em;
+    margin-right: 8px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: inline-block;
+}
+
+/* 悬停时图标动画 */
+.wish-btn:hover i {
+    transform: scale(1.4) rotate(20deg);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 1);
+}
+
+/* 加载状态旋转动画 */
+.wish-btn .fa-spinner {
+    animation: spin-fast 0.8s linear infinite;
+}
+
+/* 背景渐变流动动画 */
+@keyframes gradient-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 旋转动画 */
+@keyframes spin-fast {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 脉冲动画（禁用状态） */
+@keyframes pulse-slow {
+    0%, 100% { box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3); }
+    50% { box-shadow: 0 5px 15px rgba(255, 107, 107, 0.5); }
+}
+
+/* 按钮彩虹边框动画 */
+@keyframes rainbow-border {
+    0% {
+        border-image-source: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00);
+    }
+    25% {
+        border-image-source: linear-gradient(45deg, #00ff00, #0000ff, #4b0082, #8b00ff);
+    }
+    50% {
+        border-image-source: linear-gradient(45deg, #8b00ff, #ff00ff, #ff0000, #ff7f00);
+    }
+    75% {
+        border-image-source: linear-gradient(45deg, #ff7f00, #ffff00, #00ff00, #0000ff);
+    }
+    100% {
+        border-image-source: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00);
+    }
+}
+
+/* 许愿区域标题 */
+.wish-title {
+    color: #d32f2f;
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+}
+
+.wish-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    border-radius: 3px;
+}
+
+/* 许愿区域标题 */
+.wish-title {
+    color: #d32f2f;
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+}
+
+.wish-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    border-radius: 3px;
+}
+
+/* ========== 礼物图片弹窗样式 ========== */
+
+/* 弹窗背景遮罩 */
+.gift-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    animation: modal-fade-in 0.3s ease-out;
+}
+
+.gift-modal.show {
+    display: flex;
+    animation: modal-fade-in 0.5s ease-out;
+}
+
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+        background: rgba(0, 0, 0, 0);
+    }
+    to {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.85);
+    }
+}
+
+/* 弹窗内容 */
+.gift-modal-content {
+    background: linear-gradient(135deg, #fff9db 0%, #ffeaa7 100%);
+    border-radius: 30px;
+    padding: 40px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(255, 215, 0, 0.4),
+        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+    border: 3px solid #ffd700;
+    animation: modal-pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0.8);
+}
+
+.gift-modal.show .gift-modal-content {
+    transform: scale(1);
+}
+
+@keyframes modal-pop-in {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 弹窗头部 */
+.gift-modal-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px dashed #ffd700;
+}
+
+.gift-modal-header h2 {
+    font-size: 2.2em;
+    color: #d32f2f;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+}
+
+.gift-modal-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    border-radius: 2px;
+}
+
+.gift-modal-subtitle {
+    color: #e65100;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* 两张照片容器 - 横向排布 */
+.gift-images-container {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px 0;
+}
+
+/* 单张照片包装器 */
+.gift-image-wrapper {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    animation: wrapper-float 3s ease-in-out infinite;
+}
+
+.gift-image-wrapper:first-child {
+    animation-delay: 0s;
+}
+
+.gift-image-wrapper:last-child {
+    animation-delay: 1.5s;
+}
+
+@keyframes wrapper-float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 照片样式 */
+.gift-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(255, 215, 0, 0.5);
+    border: 4px solid white;
+    display: block;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.gift-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,215,0,0.2));
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.gift-image:hover {
+    transform: scale(1.03) translateY(-5px);
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(255, 215, 0, 0.7);
+}
+
+.gift-image:hover::before {
+    opacity: 1;
+}
+
+/* 照片标题 */
+.image-caption {
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #d32f2f;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    border: 2px solid #ffd700;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    animation: caption-glow 2s ease-in-out infinite;
+}
+
+@keyframes caption-glow {
+    0%, 100% {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 3px 15px rgba(255, 215, 0, 0.5);
+    }
+}
+
+/* 弹窗底部 */
+.gift-modal-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 3px dashed #ffd700;
+}
+
+.gift-modal-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    padding: 15px 45px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.gift-modal-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.7);
+    background: linear-gradient(135deg, #ff4d4d 0%, #e55a00 100%);
+}
+
+.gift-modal-btn:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* 关闭按钮 */
+.gift-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.8em;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    z-index: 10;
+}
+
+.gift-modal-close:hover {
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+    background: linear-gradient(135deg, #ff4d4d 0%, #e55a00 100%);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .gift-modal-content {
+        padding: 30px 20px;
+        max-width: 90%;
     }
     
-    .container {
-        padding: 20px 10px;
-    }
-    
-    .content {
-        padding: 20px 15px;
-    }
-    
-    .title {
+    .gift-modal-header h2 {
         font-size: 1.8em;
     }
     
-    .message {
-        font-size: 1.2em;
+    .gift-modal-subtitle {
+        font-size: 1em;
     }
     
-    .countdown-item {
-        min-width: 50px;
-        padding: 6px;
+    .gift-images-container {
+        flex-direction: column;
+        gap: 20px;
     }
     
-    .countdown-item span {
+    .gift-image-wrapper {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .gift-image {
+        height: 250px;
+    }
+    
+    .gift-modal-btn {
+        padding: 12px 40px;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .gift-modal-content {
+        padding: 20px 15px;
+        border-radius: 20px;
+    }
+    
+    .gift-modal-header h2 {
         font-size: 1.6em;
     }
     
-    h3 {
-        font-size: 1.1em;
+    .gift-modal-close {
+        width: 35px;
+        height: 35px;
+        font-size: 1.5em;
     }
+    
+    .gift-image {
+        height: 200px;
+        border-radius: 15px;
+    }
+    
+    .gift-modal-btn {
+        padding: 10px 35px;
+        font-size: 1em;
+    }
+    
+    .image-caption {
+        font-size: 1em;
+        padding: 6px 12px;
+    }
+}
+
+/* 音乐控制区域 */
+.music-control {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 音量控制 */
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 8px 15px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.volume-control label {
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.volume-control label:hover {
+    transform: scale(1.2);
+}
+
+.volume-control input[type="range"] {
+    width: 150px;
+    height: 8px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+    outline: none;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+    transition: transform 0.3s;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.6);
+}
+
+/* 音乐通知样式 */
+.music-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 音乐通知图标 */
+.music-notification i {
+    font-size: 1.3em;
 }

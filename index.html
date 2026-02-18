@@ -42,12 +42,13 @@
 				</div>
 				<div class="special-message" id="specialMessage"></div>
 			</div>
-            <!-- 许愿/礼物功能 -->
-            <div class="wishes">
-                <h3>🎁 告诉我你想要什么生日礼物？</h3>
-                <form name="gift-form" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+			<!-- 许愿/礼物功能 -->
+			<div class="wishes">
+				<h3 class="wish-title">🎁 告诉我你想要什么生日礼物？</h3>
+				<form name="gift-form" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" id="giftForm">
 					<input type="hidden" name="bot-field" />
 					<input type="hidden" name="form-name" value="gift-form">
+					
 					<div class="input-group">
 						<input 
 							type="text" 
@@ -56,29 +57,69 @@
 							placeholder="输入你想要的生日礼物..." 
 							required
 						>
-						<button type="submit" class="wish-btn">
-							<i class="fas fa-gift"></i> 送出愿望
+						<button type="submit" class="wish-btn rainbow-border">
+							<i class="fas fa-gift"></i> 许下愿望
 						</button>
 					</div>
 					<div class="form-message" id="formMessage"></div>
 				</form>
-                <div class="wish-history">
-                    <p class="history-title">最近的愿望：</p>
-                    <div class="wish-list" id="wishList"></div>
-                </div>
-            </div>
+			</div>
             
-            <div class="gift-box" onclick="openGift()">
-                <div class="gift">
-                    <div class="ribbon"></div>
-                </div>
-                <p class="gift-text">🎁 点击打开礼物</p>
-            </div>
-            <div class="music-control">
-                <button class="music-btn" onclick="toggleMusic()">
-                    <i class="fas fa-music"></i> 播放音乐
-                </button>
-            </div>
+            <!-- 礼物盒 -->
+			<div class="gift-box" onclick="openGift()">
+				<div class="gift">
+					<div class="ribbon"></div>
+				</div>
+				<p class="gift-text">🎁 点击打开礼物</p>
+			</div>
+
+			<!-- 礼物图片弹窗 -->
+			<div class="gift-modal" id="giftModal">
+				<div class="gift-modal-content">
+					<button class="gift-modal-close" onclick="closeGiftModal()">&times;</button>
+					<div class="gift-modal-header">
+						<h2>🎁 惊喜礼物！</h2>
+						<p class="gift-modal-subtitle">亲爱的小宝贝，愿我们年年天天都幸福快乐地在一起！</p>
+					</div>
+					<div class="gift-modal-body">
+						<!-- 两张照片横向排布 -->
+						<div class="gift-images-container">
+							<div class="gift-image-wrapper">
+								<img src="happy_birthday.png" alt="生日礼物 1" class="gift-image">
+								<div class="image-caption">🎁 祝家里老大生日快乐！</div>
+							</div>
+							<div class="gift-image-wrapper">
+								<img src="most_beautiful.jpg" alt="生日礼物 2" class="gift-image">
+								<div class="image-caption">🎁 看！这是世界上最美丽可爱漂亮的老婆大人！</div>
+							</div>
+						</div>
+					</div>
+					<div class="gift-modal-footer">
+						<button class="gift-modal-btn" onclick="closeGiftModal()">❤️ 收下礼物</button>
+					</div>
+				</div>
+			</div>
+
+            <!-- 音乐控制区域 -->
+			<div class="music-control">
+				<button class="music-btn" onclick="toggleMusic()">
+					<i class="fas fa-music"></i> <span id="musicBtnText">播放音乐</span>
+				</button>
+				<div class="volume-control">
+					<label for="volumeSlider">
+						<i class="fas fa-volume-up"></i>
+					</label>
+					<input 
+						type="range" 
+						id="volumeSlider" 
+						min="0" 
+						max="1" 
+						step="0.1" 
+						value="0.7"
+						oninput="setVolume(this.value)"
+					>
+				</div>
+			</div>
             
             <!-- 管理员查看按钮 -->
             <div class="admin-section">
@@ -90,7 +131,7 @@
     </div>
 
     <audio id="birthdaySong" loop>
-        <source src="birthday.mp3" type="audio/mpeg">
+        <source src="sound.mp3" type="audio/mpeg">
     </audio>
 
     <script src="script.js"></script>
