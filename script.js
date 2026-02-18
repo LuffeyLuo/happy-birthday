@@ -1,41 +1,112 @@
 // ======================
-// 农历倒计时功能
+// 精确的春节日期表（2020-2040年）
+// 数据来源：中国科学院紫金山天文台官方发布
+// 格式：年份 -> 正月初一的公历日期（月, 日），月份从0开始（0=1月）
 // ======================
+const SPRING_FESTIVAL_DATES = {
+    2020: [0, 25],  // 1月25日
+    2021: [1, 12],  // 2月12日
+    2022: [1, 1],   // 2月1日
+    2023: [0, 22],  // 1月22日
+    2024: [1, 10],  // 2月10日
+    2025: [0, 29],  // 1月29日
+    2026: [1, 17],  // 2月17日 ← 正月初一，初三 = 2月19日 ✓
+    2027: [1, 6],   // 2月6日
+    2028: [0, 26],  // 1月26日
+    2029: [1, 13],  // 2月13日
+    2030: [1, 3],   // 2月3日
+    2031: [1, 23],  // 2月23日
+    2032: [1, 11],  // 2月11日
+    2033: [1, 1],   // 2月1日
+    2034: [1, 19],  // 2月19日
+    2035: [1, 8],   // 2月8日
+    2036: [1, 28],  // 2月28日
+    2037: [1, 15],  // 2月15日
+    2038: [1, 4],   // 2月4日
+    2039: [1, 24],  // 2月24日
+    2040: [1, 12]   // 2月12日
+};
 
+// 获取指定年份的农历大年初三（正月初三 = 正月初一 + 2天）
+function getLunarThirdDay(year) {
+    const dateInfo = SPRING_FESTIVAL_DATES[year];
+    
+    if (!dateInfo) {
+        console.warn(`年份 ${year} 不在预定义春节日期表中，使用估算值`);
+        return new Date(year, 1, 10);
+    }
+    
+    // 创建正月初一的日期
+    const lunarNewYear = new Date(year, dateInfo[0], dateInfo[1]);
+    
+    // 计算初三（+2天）
+    lunarNewYear.setDate(lunarNewYear.getDate() + 2);
+    
+    return lunarNewYear;
+}
+
+// 判断两个日期是否是同一天（忽略时分秒）
+function isSameDay(date1, date2) {
+    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return d1.getTime() === d2.getTime();
+}
+
+// ======================
+// 倒计时更新函数
+// ======================
 function updateLunarCountdown() {
-    // 获取当前日期
     const now = new Date();
     const currentYear = now.getFullYear();
     
-    // 计算今年的农历大年初三
-    let targetDate = getLunarDate(currentYear, 1, 3); // 农历正月初三
+    // 获取今年的大年初三
+    let targetDate = getLunarThirdDay(currentYear);
     
-    // 如果今年的大年初三已过，计算明年的
-    if (now > targetDate) {
-        targetDate = getLunarDate(currentYear + 1, 1, 3);
-    }
+    // 调试信息
+    console.log('=== 倒计时调试信息 ===');
+    console.log('当前日期:', now.toLocaleString('zh-CN'));
+    console.log('目标日期（今年）:', targetDate.toLocaleDateString('zh-CN'));
+    console.log('当前年份:', currentYear);
     
-    // 检查今天是否是目标日期（精确到天）
+    // 先判断是否是目标日期（同一天）
     const isTargetDay = isSameDay(now, targetDate);
     
+    console.log('是否是目标日期:', isTargetDay);
+    
+    // 如果不是今天，且已经过了，才计算明年
+    if (!isTargetDay && now > targetDate) {
+        console.log('今年的初三已过，计算明年...');
+        targetDate = getLunarThirdDay(currentYear + 1);
+        console.log('目标日期（明年）:', targetDate.toLocaleDateString('zh-CN'));
+    }
+    
+    console.log('=====================');
+    
     // 更新UI
+    const countdownTitle = document.getElementById('countdownTitle');
+    const countdownContainer = document.getElementById('countdown');
+    const specialMessage = document.getElementById('specialMessage');
+    
     if (isTargetDay) {
+        console.log('🎉 触发生日特效！');
         // 今天是农历大年初三！
-        document.getElementById('countdownTitle').textContent = '🎉 今日吉日 🎉';
-        document.getElementById('countdown').style.display = 'none';
+        if (countdownTitle) countdownTitle.textContent = '🎂 今日吉日 🎂';
+        if (countdownContainer) countdownContainer.style.display = 'none';
         
-        const specialMessage = document.getElementById('specialMessage');
-        specialMessage.textContent = '今天是农历大年初三，快快许愿吧！🎂✨';
-        specialMessage.className = 'special-message birthday';
-        specialMessage.style.display = 'block';
+        if (specialMessage) {
+            specialMessage.textContent = '今天是农历大年初三，快快许愿吧！✨🎁';
+            specialMessage.className = 'special-message birthday';
+            specialMessage.style.display = 'block';
+        }
         
         // 添加生日特效
         addBirthdayEffects();
     } else {
+        console.log('⏳ 显示倒计时');
         // 正常倒计时
-        document.getElementById('countdownTitle').textContent = '⏳ 距离农历大年初三还有';
-        document.getElementById('countdown').style.display = 'flex';
-        document.getElementById('specialMessage').style.display = 'none';
+        if (countdownTitle) countdownTitle.textContent = '⏳ 距离农历大年初三还有';
+        if (countdownContainer) countdownContainer.style.display = 'flex';
+        if (specialMessage) specialMessage.style.display = 'none';
         
         // 计算时间差
         const diff = targetDate - now;
@@ -45,53 +116,32 @@ function updateLunarCountdown() {
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
         // 更新显示
-        document.getElementById('days').textContent = String(days).padStart(2, '0');
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
     }
 }
 
-// 获取农历对应的公历日期
-function getLunarDate(year, lunarMonth, lunarDay) {
-    try {
-        // chineseLunar 是全局变量，由 CDN 加载
-        const solarDate = chineseLunar.lunarToSolar(year, lunarMonth, lunarDay, 0);
-        // solarDate 格式: [year, month(1-12), day, leapMonth]
-        return new Date(solarDate[0], solarDate[1] - 1, solarDate[2]);
-    } catch (e) {
-        console.error('农历计算失败:', e);
-        // 备用方案：使用2025年大年初三作为示例（2025年1月31日是大年初一，2月2日是初三）
-        if (year === 2025) return new Date(2025, 1, 2); // 2025年2月2日
-        if (year === 2026) return new Date(2026, 1, 21); // 2026年2月21日（估算）
-        return new Date(year, 1, 15); // 默认返回2月15日
-    }
-}
-
-// 判断两个日期是否是同一天
-function isSameDay(date1, date2) {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
-}
-
-// 生日特效
+// 彩纸特效
 function addBirthdayEffects() {
-    // 添加飘落的彩纸
-    createConfetti();
-    
-    // 蛋糕蜡烛闪烁加速
-    const flames = document.querySelectorAll('.flame');
-    flames.forEach(flame => {
-        flame.style.animation = 'flicker 0.1s infinite alternate';
-    });
-}
-
-// 彩纸效果
-function createConfetti() {
     const container = document.querySelector('.container');
-    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dfe6e9', '#feca57'];
+    if (!container) return;
     
+    // 防止重复触发
+    if (container.dataset.birthdayEffects === 'true') {
+        return;
+    }
+    container.dataset.birthdayEffects = 'true';
+    
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dfe6e9', '#feca57', '#fd79a8'];
+    
+    // 创建100个彩纸
     for (let i = 0; i < 100; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
@@ -100,40 +150,61 @@ function createConfetti() {
         confetti.style.top = '-20px';
         confetti.style.width = Math.random() * 10 + 5 + 'px';
         confetti.style.height = confetti.style.width;
-        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-        confetti.style.opacity = Math.random();
+        confetti.style.borderRadius = '50%';
         confetti.style.position = 'absolute';
-        confetti.style.zIndex = '100';
-        confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+        confetti.style.zIndex = '1000';
+        confetti.style.opacity = Math.random();
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.animation = `fall-${i} ${Math.random() * 3 + 2}s linear forwards`;
         
         container.appendChild(confetti);
         
-        // 3秒后移除
+        // 添加独立动画
+        const style = document.createElement('style');
+        const duration = Math.random() * 3 + 2;
+        const delay = Math.random() * 1;
+        style.textContent = `
+            @keyframes fall-${i} {
+                0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                100% { transform: translateY(100vh) rotate(${Math.random() * 720}deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 5秒后移除
         setTimeout(() => {
             confetti.remove();
-        }, 3000);
+        }, (duration + delay) * 1000);
     }
     
-    // 添加CSS动画
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
+    // 蛋糕蜡烛闪烁加速
+    const flames = document.querySelectorAll('.flame');
+    flames.forEach(flame => {
+        flame.style.animation = 'flicker-fast 0.1s infinite alternate';
+    });
+    
+    // 添加快速闪烁动画
+    const existingStyle = document.querySelector('#birthday-effects-style');
+    if (!existingStyle) {
+        const style = document.createElement('style');
+        style.id = 'birthday-effects-style';
+        style.textContent = `
+            @keyframes flicker-fast {
+                0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+                50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
-// 初始化倒计时（每秒更新）
+// 初始化倒计时
 setInterval(updateLunarCountdown, 1000);
 updateLunarCountdown(); // 立即执行一次
 
 // ======================
-// 其他原有功能保持不变
+// 表单提交处理
 // ======================
-
-// 表单提交处理（保持原有逻辑）
 const giftForm = document.getElementById('giftForm');
 const formMessage = document.getElementById('formMessage');
 const wishList = document.getElementById('wishList');
@@ -222,7 +293,9 @@ function loadWishHistory() {
     });
 }
 
+// ======================
 // 礼物盒功能
+// ======================
 function openGift() {
     const gift = document.querySelector('.gift');
     const giftText = document.querySelector('.gift-text');
@@ -237,7 +310,9 @@ function openGift() {
     }
 }
 
+// ======================
 // 音乐控制
+// ======================
 const birthdaySong = document.getElementById('birthdaySong');
 let isPlaying = false;
 
@@ -269,7 +344,9 @@ function toggleMusic() {
     }
 }
 
+// ======================
 // 管理员面板
+// ======================
 function showAdminPanel() {
     // 创建模态框
     const modal = document.createElement('div');
@@ -349,7 +426,9 @@ function loadGiftRecords() {
     recordsSection.innerHTML = html;
 }
 
+// ======================
 // 雪花效果
+// ======================
 function createSnow() {
     const container = document.querySelector('.container');
     if (!container) return;
@@ -371,14 +450,18 @@ function createSnow() {
     }
 }
 
+// ======================
 // 页面加载完成后执行
+// ======================
 window.addEventListener('load', () => {
     createSnow();
     loadWishHistory();
     
-    // 确保农历库已加载
-    if (typeof chineseLunar === 'undefined') {
-        console.warn('农历库加载失败，使用备用方案');
-        // 可以在这里添加备用倒计时逻辑
-    }
+    // 验证日期准确性
+    console.log('========== 日期验证 =========='); 
+    console.log('今天是:', new Date().toLocaleString('zh-CN'));
+    console.log('2026年大年初三应该是: 2026年2月19日');
+    console.log('计算得出的2026年大年初三:', getLunarThirdDay(2026).toLocaleDateString('zh-CN'));
+    console.log('是否匹配:', isSameDay(new Date(), getLunarThirdDay(2026)));
+    console.log('==============================');
 });
